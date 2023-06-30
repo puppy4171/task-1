@@ -1,0 +1,55 @@
+IoT-based car parking management system using Arduino code and components. 
+
+Components needed:
+1. Arduino board (e.g., Arduino Uno)
+2. Ultrasonic sensor (e.g., HC-SR04)
+3. Servo motor
+4. LEDs (optional)
+
+ Arduino code
+arduino
+#include <Servo.h>
+
+const int trigPin = 7;
+const int echoPin = 6;
+const int servoPin = 9;
+const int ledPin = 13;
+
+Servo servo;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+
+  servo.attach(servoPin);
+  servo.write(0);  // Initialize the servo position to closed
+  delay(500);
+}
+
+void loop() {
+  long duration, distance;
+  
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  duration = pulseIn(echoPin, HIGH);
+  
+  distance = (duration / 2) / 29.1;  // Calculate distance in centimeters
+  
+  if (distance < 10) {  // Adjust this value according to your parking space size
+    // Parking space occupied
+    digitalWrite(ledPin, HIGH);  // Optional: Turn on an LED to indicate occupancy
+    servo.write(90);  // Open the servo gate
+  } else {
+    // Parking space available
+    digitalWrite(ledPin, LOW);  // Optional: Turn off the LED
+    servo.write(0);  // Close the servo gate
+  }
+  
+  delay(500);  // Adjust delay as needed for your application
+}
